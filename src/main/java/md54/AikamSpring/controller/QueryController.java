@@ -1,6 +1,7 @@
 package md54.AikamSpring.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import md54.AikamSpring.data.RawSqlRepository;
 import md54.AikamSpring.data.CustomerRepository;
 import md54.AikamSpring.data.GoodsRepository;
 import md54.AikamSpring.data.PurchasesRepository;
@@ -22,6 +23,8 @@ public class QueryController {
   private GoodsRepository goodsRepository;
   @Autowired
   private PurchasesRepository purchasesRepository;
+  @Autowired
+  private RawSqlRepository rawSqlRepository;
 
   public QueryController() {
   }
@@ -35,23 +38,6 @@ public class QueryController {
 //    this.purchasesRepository = purchasesRepository;
 //  }
 
-  private static List<Customer> queryCustomersByCostRange(long minExpenses, long maxExpenses) {
-    final String SQL_QUERY =
-            " SELECT \"CUSTOMER\".\"NAME\",\"LASTNAME\", totalCost FROM \"CUSTOMER\" join"
-                    + " (SELECT \"CUSTOMER_ID\", sum(\"GOODS\".\"PRICE\") as totalCost FROM \"PURCHASES\",\"GOODS\" where \"GOODS\".\"ID\" = \"PURCHASES\".\"GOODS_ID\" GROUP BY \"CUSTOMER_ID\")"
-                    + "AS results on \"CUSTOMER\".\"ID\" = results.\"CUSTOMER_ID\""
-                    + "where totalCost > ? AND totalCost< ?";
-    return null;
-  }
-
-  private static List<Customer> queryPassiveCustomers(long badCustomers) {
-
-    final String SQL_QUERY =
-            "SELECT \"NAME\",\"LASTNAME\" FROM \"CUSTOMER\" "
-                    + "join (SELECT \"CUSTOMER_ID\" FROM \"PURCHASES\" GROUP BY \"CUSTOMER_ID\""
-                    + "ORDER by COUNT(*) LIMIT ?) AS results on \"CUSTOMER\".\"ID\" = results.\"CUSTOMER_ID\"";
-    return null;
-  }
 
   public List<Customer> get(JsonNode criteria) {
     if (criteria.get("lastName") != null) {
@@ -86,4 +72,13 @@ public class QueryController {
             .map(Map.Entry::getKey)
             .collect(Collectors.toList());
   }
+
+  private List<Customer> queryCustomersByCostRange(long minExpenses, long maxExpenses) {
+    return rawSqlRepository.queryCustomersByCostRange(minExpenses, maxExpenses);
+  }
+
+  private List<Customer> queryPassiveCustomers(long badCustomers) {
+    return rawSqlRepository.queryPassiveCustomers(badCustomers);
+  }
+
 }

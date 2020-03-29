@@ -20,24 +20,29 @@ import java.util.Map;
 @Service
 public class MainLogic {
 
-  @Autowired
-  private QueryController controller;
+    @Autowired
+    private QueryController controller;
 
-  private Logger logger;
-  @Autowired
-  private Reader reader;
-  @Autowired
-  private Writer writer;
+    @Autowired
+    private QueryExecutorStatistics statistics;
 
-  private AnswerTemplate answer;
+    @Autowired
+    private Reader reader;
+
+    @Autowired
+    private Writer writer;
+
+    private Logger logger;
+
+    private AnswerTemplate answer;
 
 
-  public MainLogic(Reader reader, Writer writer) {
-    this.reader = reader;
-    this.writer = writer;
-    this.controller = new QueryController();
-    logger = LoggerFactory.getLogger(MainLogic.class);
-  }
+    public MainLogic(Reader reader, Writer writer) {
+        this.reader = reader;
+        this.writer = writer;
+        this.controller = new QueryController();
+        logger = LoggerFactory.getLogger(MainLogic.class);
+    }
 
   // логика исполнения с ключем search
   public void executeSearch() {
@@ -62,9 +67,9 @@ public class MainLogic {
   // логика исполнения с ключем stat
   public void executeStat() {
     try {
-      Map<String, LocalDate> dates = reader.getDates();
-      QueryExecutorStatistics stat = new QueryExecutorStatistics(dates);
-      answer = new AnswerStatisticsDTO(dates, stat.execute());
+        Map<String, LocalDate> dates = reader.getDates();
+        QueryExecutorStatistics.setDates(dates);
+        answer = new AnswerStatisticsDTO(dates, statistics.execute());
     } catch (IOException | SQLException | NullPointerException e) {
       logger.error("Statistics execute error: ", e);
       answer = new AnswerErrorDTO(e.getMessage());

@@ -2,15 +2,17 @@ package md54.AikamSpring.entity;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
-@Data
 @Entity
 @Table(name = "\"CUSTOMER\"")
-public class Customer extends BaseEntity {
+public class Customer {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "\"ID\"")
+    private Long id;
 
     @Column(name = "\"LASTNAME\"")
     private String lastName;
@@ -34,5 +36,25 @@ public class Customer extends BaseEntity {
     @Override
     public String toString() {
         return "Customer{" + ", name='" + firstName + '\'' + ", lastName='" + lastName + '\'' + '}';
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 }

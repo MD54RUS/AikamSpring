@@ -1,5 +1,6 @@
 package md54.AikamSpring.controller.DTO;
 
+import javax.persistence.Entity;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
